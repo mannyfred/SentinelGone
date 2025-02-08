@@ -4,9 +4,8 @@
 
 void GetShit(PVOID* pReturn, PVOID* pLdrpVectorHandlerList) {
 
-	HMODULE ntdll = KERNEL32$GetModuleHandleA("NTDLL.DLL");
-
-	ULONG64 list = (ULONG64)KERNEL32$GetProcAddress(ntdll, "RtlRemoveVectoredExceptionHandler");
+    HMODULE ntdll = KERNEL32$GetModuleHandleA("NTDLL.DLL");
+    ULONG64 list = (ULONG64)KERNEL32$GetProcAddress(ntdll, "RtlRemoveVectoredExceptionHandler");
 
     while (*(BYTE*)list != 0xcc) {
 
@@ -26,15 +25,15 @@ void GetShit(PVOID* pReturn, PVOID* pLdrpVectorHandlerList) {
         list = list + 1;
     }
 
-	HMODULE ret = KERNEL32$GetModuleHandleA("KERNELBASE.DLL");
+    HMODULE ret = KERNEL32$GetModuleHandleA("KERNELBASE.DLL");
 
-	ret += 0x1000;
+    ret += 0x1000;
 
-	while (((*(ULONG64*)ret) & 0xffffffffffff) != 0xc3ffffffffb8) {
-		ret = ret + 1;
-	}
+    while (((*(ULONG64*)ret) & 0xffffffffffff) != 0xc3ffffffffb8) {
+    	ret = ret + 1;
+    }
 
-	*pReturn = (PVOID)ret;
+    *pReturn = (PVOID)ret;
 }
 
 BOOL FixShit(ULONG pid) {
