@@ -8,11 +8,23 @@ void GetShit(PVOID* pReturn, PVOID* pLdrpVectorHandlerList) {
 
 	ULONG64 list = (ULONG64)KERNEL32$GetProcAddress(ntdll, "RtlRemoveVectoredExceptionHandler");
 
-	while (((*(ULONG*)list) & 0xffffff) != 0x258d4c) {
-		list = list + 1;
-	}
+    while (*(BYTE*)list != 0xcc) {
 
-	list = list + 7 + *(int*)(list + 3);
+        if (*(BYTE*)list == 0xe9) {
+
+            list = list + 5 + *(int*)(list + 1);
+
+            while (((*(ULONG*)list) & 0xffffff) != 0x258d4c) {
+                list = list + 1;
+            }
+        
+            list = list + 7 + *(int*)(list + 3);
+            *pLdrpVectorHandlerList = (PVOID)list;
+            break;
+        }
+
+        list = list + 1;
+    }
 
 	HMODULE ret = KERNEL32$GetModuleHandleA("KERNELBASE.DLL");
 
@@ -22,7 +34,6 @@ void GetShit(PVOID* pReturn, PVOID* pLdrpVectorHandlerList) {
 		ret = ret + 1;
 	}
 
-	*pLdrpVectorHandlerList = (PVOID)list;
 	*pReturn = (PVOID)ret;
 }
 
